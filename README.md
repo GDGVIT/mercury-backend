@@ -2,7 +2,7 @@
 <a href="https://dscvit.com">
 	<img src="https://user-images.githubusercontent.com/30529572/92081025-fabe6f00-edb1-11ea-9169-4a8a61a5dd45.png" alt="DSC VIT"/>
 </a>
-	<h2 align="center"> Mercury Backend </h2>
+	<h2 align="center"> Mercury Mailer Backend </h2>
 	<h4 align="center"> Backend of website for sending emails easily with beautiful templates in bulk <h4>
 </p>
 
