@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+import re
 
 class RegistrationSerializer(serializers.ModelSerializer):
 
@@ -24,3 +25,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
         return account
+
+
+    def validate_email(self, email):
+        pat = re.compile(r'^[^@]+@[^@]+\.[A-Za-z]+$')
+        if not re.match(pat,email):
+            raise serializers.ValidationError("Enter a valid email address")
+
+        return email
