@@ -8,12 +8,15 @@ from rest_framework.views import APIView
 from .serializers import EmailSerializer
 from rest_framework.response import Response
 
+import boto3
+from botocore.exceptions import ClientError
+
 class SendEmailView(APIView):
 
     context = {}
 
     def post(self, request):
-        serializer = EmailSerializer(request.data)
+        serializer = EmailSerializer(data=request.data)
 
         if serializer.is_valid():
             sender_name = serializer.validated_data['sender_name']
