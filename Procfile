@@ -1,1 +1,1 @@
-web: gunicorn mercury.wsgi
+web: cd mercury && gunicorn mercury.wsgi
