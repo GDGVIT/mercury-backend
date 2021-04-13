@@ -1,29 +1,37 @@
 from django.shortcuts import render
 from rest_framework import decorators
-
-# Create your views here.
-
-
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
-from .serializers import EmailSerializer
 from rest_framework.response import Response
 
+import csv
+import io
 
+from .serializers import EmailSerializer
 from .utilities import send_email, render_templates
 
 
 class SendEmailView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
     def post(self, request):
         context = {}
         c = 1
         serializer = EmailSerializer(data=request.data)
+
         if serializer.is_valid():
-            recipients = (serializer.validated_data["recipients"],)
+
+            file = serializer.validated_data["recipients"]
+
+            recipient_data = csv.DictReader(io.StringIO(file.read().decode()))
+
+            recipient_emails = []
+            for data in recipient_data:
+                recipient_emails.append(data["email"])
 
             body_html = render_templates(serializer.validated_data["body_mjml"])
 
-            for recipient in recipients:
-
+            for recipient in recipient_emails:
                 context[c] = send_email(
                     sender_name=serializer.validated_data["sender_name"],
                     sender_email=serializer.validated_data["sender_email"],
