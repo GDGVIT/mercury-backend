@@ -25,17 +25,16 @@ class SendEmailView(APIView):
 
             recipient_data = csv.DictReader(io.StringIO(file.read().decode()))
 
-            recipient_emails = []
             for data in recipient_data:
-                recipient_emails.append(data["email"])
 
-            body_html = render_templates(serializer.validated_data["body_mjml"])
+                body_html = render_templates(
+                    serializer.validated_data["body_mjml"], data
+                )
 
-            for recipient in recipient_emails:
                 context[c] = send_email(
                     sender_name=serializer.validated_data["sender_name"],
                     sender_email=serializer.validated_data["sender_email"],
-                    recipient=recipient,
+                    recipient_email=data["email"],
                     subject=serializer.validated_data["subject"],
                     body_text=serializer.validated_data["body_text"],
                     body_html=body_html,

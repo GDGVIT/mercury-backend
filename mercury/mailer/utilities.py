@@ -7,7 +7,7 @@ from jinja2 import Template
 def send_email(**info):
     SENDER = f"{info['sender_name']} <{info['sender_email']}>"
 
-    RECIPIENT = info["recipient"]
+    RECIPIENT = info["recipient_email"]
 
     AWS_REGION = info["aws_region"]
 
@@ -59,15 +59,11 @@ def toHTML(mjml):
     return html["html"]
 
 
-def render_templates(mjml):
+def render_templates(mjml, recipient_info):
     html = toHTML(mjml)
 
     html = Template(html)
 
-    final_html = html.render(
-        {
-            "name": "Abhiram",
-        }
-    )
+    final_html = html.render(recipient_info)
 
     return final_html
