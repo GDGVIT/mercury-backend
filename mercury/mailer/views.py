@@ -1,14 +1,14 @@
-from django.shortcuts import render
-from rest_framework import decorators
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
 import csv
 import io
 
+from django.shortcuts import render
+from rest_framework import decorators
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .serializers import EmailSerializer
-from .utilities import send_email, render_templates
+from .utilities import render_templates, send_email
 
 
 class SendEmailView(APIView):

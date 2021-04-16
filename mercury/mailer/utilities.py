@@ -1,10 +1,12 @@
 import boto3
 from botocore.exceptions import ClientError
-from mjml.mjml2html import mjml_to_html
 from jinja2 import Template
+from mjml.mjml2html import mjml_to_html
 
 
 def send_email(**info):
+    """ Sends email """
+
     SENDER = f"{info['sender_name']} <{info['sender_email']}>"
 
     RECIPIENT = info["recipient_email"]
@@ -55,11 +57,15 @@ def send_email(**info):
 
 
 def toHTML(mjml):
+    """ Converts MJML to HTML """
+
     html = mjml_to_html(mjml)
     return html["html"]
 
 
 def render_templates(mjml, recipient_info):
+    """ Converts MJML to HTML and returns after rendering values in the template tags """
+
     html = toHTML(mjml)
 
     html = Template(html)

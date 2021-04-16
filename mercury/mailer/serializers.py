@@ -8,4 +8,4 @@ class EmailSerializer(serializers.Serializer):
     subject = serializers.CharField(max_length=1000)
     body_text = serializers.CharField(max_length=5000)
     body_mjml = serializers.CharField(max_length=5000)
-    aws_region = serializers.CharField(max_length=20)
+    aws_region = serializers.CharField(max_length=20, default="ap-south-1")
