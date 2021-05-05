@@ -3,6 +3,7 @@ from rest_framework import decorators
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 import csv
 import io
@@ -13,6 +14,7 @@ from .utilities import send_email, render_templates
 
 class SendEmailView(APIView):
     parser_classes = (MultiPartParser, FormParser)
+    # permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         context = {}
