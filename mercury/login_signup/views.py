@@ -1,8 +1,10 @@
 from django.shortcuts import render
-from .serializers import RegistrationSerializer
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+
+from .serializers import RegistrationSerializer
+
 
 # Create your views here.
 @api_view(["POST"])

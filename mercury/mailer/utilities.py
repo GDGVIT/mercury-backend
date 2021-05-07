@@ -1,7 +1,7 @@
 import boto3
 from botocore.exceptions import ClientError
-from mjml.mjml2html import mjml_to_html
 from jinja2 import Template
+from mjml.mjml2html import mjml_to_html
 
 
 def send_email(**info):
