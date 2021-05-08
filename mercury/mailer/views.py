@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import EmailSerializer
+from .serializers import EmailSerializer, TestEmailSerializer
 from .utilities import render_templates, send_email
 
 
@@ -57,7 +57,7 @@ class SendTestEmailView(APIView):
     def post(self, request):
         context = {}
         c = 1
-        serializer = EmailSerializer(data=request.data)
+        serializer = TestEmailSerializer(data=request.data)
 
         if serializer.is_valid():
 
