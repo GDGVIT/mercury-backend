@@ -17,7 +17,7 @@ class SendEmailView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        context = {}
+        response = {}
         c = 1
         serializer = EmailSerializer(data=request.data)
 
@@ -33,7 +33,7 @@ class SendEmailView(APIView):
                     serializer.validated_data["body_mjml"], data
                 )
 
-                context[c] = send_email(
+                response[c] = send_email(
                     sender_name=serializer.validated_data["sender_name"],
                     sender_email=serializer.validated_data["sender_email"],
                     recipient_email=data["email"],
@@ -45,9 +45,9 @@ class SendEmailView(APIView):
                 c += 1
 
         else:
-            context = serializer.errors
+            response = serializer.errors
 
-        return Response(context)
+        return Response(response)
 
 
 class SendTestEmailView(APIView):
@@ -55,7 +55,7 @@ class SendTestEmailView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        context = {}
+        response = {}
         c = 1
         serializer = TestEmailSerializer(data=request.data)
 
@@ -66,8 +66,7 @@ class SendTestEmailView(APIView):
             recipient_data = csv.DictReader(io.StringIO(file.read().decode()))
             data = [i for i in recipient_data]
 
-            test_recipient_emails = serializer.validated_data["test_recipient_emails"] + [
-                serializer.validated_data["sender_email"]]
+            test_recipient_emails = serializer.validated_data["test_recipient_emails"] + [serializer.validated_data["sender_email"]]
 
             for email in test_recipient_emails:
 
@@ -75,7 +74,7 @@ class SendTestEmailView(APIView):
                     serializer.validated_data["body_mjml"], data[0]
                 )
 
-                context[c] = send_email(
+                response[c] = send_email(
                     sender_name=serializer.validated_data["sender_name"],
                     sender_email=serializer.validated_data["sender_email"],
                     recipient_email=email,
@@ -87,6 +86,6 @@ class SendTestEmailView(APIView):
                 c += 1
 
         else:
-            context = serializer.errors
+            response = serializer.errors
 
-        return Response(context)
+        return Response(response)
