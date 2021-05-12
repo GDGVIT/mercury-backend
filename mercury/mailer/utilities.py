@@ -1,7 +1,9 @@
 import boto3
+import requests
 from botocore.exceptions import ClientError
 from jinja2 import Template
 from mjml.mjml2html import mjml_to_html
+from requests.auth import HTTPBasicAuth
 
 
 def send_email(**info):
@@ -55,7 +57,15 @@ def send_email(**info):
 
 
 def toHTML(mjml):
-    html = mjml_to_html(mjml)
+    response = requests.post(
+        "https://api.mjml.io/v1/render",
+        json={"mjml": mjml},
+        auth=HTTPBasicAuth(
+            "6571d42e-8218-4aaa-8c6f-547c957e6b8d",
+            "59bac571-8f7e-4af4-96cb-748b977af14d",
+        ),
+    )
+    html = response.json()
     return html["html"]
 
 

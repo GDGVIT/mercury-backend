@@ -20,4 +20,3 @@ class TestEmailSerializer(serializers.Serializer):
     body_text = serializers.CharField()
     body_mjml = serializers.CharField()
     aws_region = serializers.CharField(max_length=20)
-    

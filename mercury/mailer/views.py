@@ -66,7 +66,9 @@ class SendTestEmailView(APIView):
             recipient_data = csv.DictReader(io.StringIO(file.read().decode()))
             data = [i for i in recipient_data]
 
-            test_recipient_emails = serializer.validated_data["test_recipient_emails"] + [serializer.validated_data["sender_email"]]
+            test_recipient_emails = serializer.validated_data[
+                "test_recipient_emails"
+            ] + [serializer.validated_data["sender_email"]]
 
             for email in test_recipient_emails:
 
