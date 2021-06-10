@@ -1,7 +1,7 @@
 import boto3
-from decouple import config
 import requests
 from botocore.exceptions import ClientError
+from decouple import config
 from jinja2 import Template
 from requests.auth import HTTPBasicAuth
 

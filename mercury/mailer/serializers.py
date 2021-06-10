@@ -23,5 +23,5 @@ class TestEmailSerializer(serializers.Serializer):
 
 
 class GetUrlSerializer(serializers.Serializer):
-    # image = serializers.ListField()
+    file_name = serializers.CharField()
     image = serializers.ImageField(allow_empty_file=False)

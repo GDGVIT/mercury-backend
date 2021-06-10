@@ -15,10 +15,10 @@
 
 
 ## Features
-- [ ]  Bulk Mailing
-- [ ]  Login/Logout
-- [ ]  MJML to HTML conversion
-- [ ]  Automating time
+- [x]  Bulk Mailing
+- [x]  Login/Logout
+- [x]  MJML to HTML conversion
+- [x]  Automating time
 
 <br>
 
@@ -48,7 +48,7 @@
 		<td>
 		Abhiram V. Joshi
 		<p align="center">
-			<img src = "https://dscvit.com/images/dsc-logo-square.svg" width="150" height="150" alt="Abhiram V. Joshi">
+			<img src = "https://avatars.githubusercontent.com/u/76663722?v=4" width="150" height="150" alt="Abhiram V. Joshi">
 		</p>
 			<p align="center">
 				<a href = "https://github.com/Abhiram-Joshi">

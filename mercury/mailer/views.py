@@ -1,4 +1,3 @@
-import base64
 import csv
 import io
 
@@ -21,23 +20,26 @@ class GetUrlView(APIView):
         serializer.is_valid(raise_exception=True)
 
         image = serializer.validated_data["image"]
+        file_name = serializer.validated_data["file_name"]
 
         c = 1
         response = {
             "data": [],
         }
 
-        image_base64 = base64.b64encode(image.read())
-
         s3_resource = boto3.resource("s3")
         bucket_name = "mercury-mailer"
 
         s3_resource.Bucket(bucket_name).put_object(
-            Key=f"image.png", Body=image_base64, ACL="public-read"
+            Key=f"{file_name}.png",
+            Body=image,
+            ACL="public-read",
+            ContentType="image/png",
+            ContentDisposition="inline",
         )
 
         response["data"].append(
-            f"https://{bucket_name}.s3.ap-south-1.amazonaws.com/image.png"
+            f"https://{bucket_name}.s3.ap-south-1.amazonaws.com/{file_name}.png"
         )
         c += 1
 
