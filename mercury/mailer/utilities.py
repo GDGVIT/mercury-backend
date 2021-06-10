@@ -1,8 +1,8 @@
 import boto3
+from decouple import config
 import requests
 from botocore.exceptions import ClientError
 from jinja2 import Template
-from mjml.mjml2html import mjml_to_html
 from requests.auth import HTTPBasicAuth
 
 
@@ -61,8 +61,8 @@ def toHTML(mjml):
         "https://api.mjml.io/v1/render",
         json={"mjml": mjml},
         auth=HTTPBasicAuth(
-            "6571d42e-8218-4aaa-8c6f-547c957e6b8d",
-            "59bac571-8f7e-4af4-96cb-748b977af14d",
+            config("MJML_API_USERNAME"),
+            config("MJML_API_PASSWORD"),
         ),
     )
     html = response.json()

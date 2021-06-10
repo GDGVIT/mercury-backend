@@ -8,7 +8,7 @@ class EmailSerializer(serializers.Serializer):
     subject = serializers.CharField(max_length=1000)
     body_text = serializers.CharField()
     body_mjml = serializers.CharField()
-    aws_region = serializers.CharField(max_length=20)
+    aws_region = serializers.CharField(max_length=20, default="ap-south-1")
 
 
 class TestEmailSerializer(serializers.Serializer):
@@ -19,4 +19,9 @@ class TestEmailSerializer(serializers.Serializer):
     subject = serializers.CharField(max_length=1000)
     body_text = serializers.CharField()
     body_mjml = serializers.CharField()
-    aws_region = serializers.CharField(max_length=20)
+    aws_region = serializers.CharField(max_length=20, default="ap-south-1")
+
+
+class GetUrlSerializer(serializers.Serializer):
+    # image = serializers.ListField()
+    image = serializers.ImageField(allow_empty_file=False)

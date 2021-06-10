@@ -1,15 +1,47 @@
+import base64
 import csv
 import io
 
-from django.shortcuts import render
-from rest_framework import decorators
+import boto3
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import EmailSerializer, TestEmailSerializer
+from .serializers import EmailSerializer, GetUrlSerializer, TestEmailSerializer
 from .utilities import render_templates, send_email
+
+
+class GetUrlView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = GetUrlSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        image = serializer.validated_data["image"]
+
+        c = 1
+        response = {
+            "data": [],
+        }
+
+        image_base64 = base64.b64encode(image.read())
+
+        s3_resource = boto3.resource("s3")
+        bucket_name = "mercury-mailer"
+
+        s3_resource.Bucket(bucket_name).put_object(
+            Key=f"image.png", Body=image_base64, ACL="public-read"
+        )
+
+        response["data"].append(
+            f"https://{bucket_name}.s3.ap-south-1.amazonaws.com/image.png"
+        )
+        c += 1
+
+        return Response(response)
 
 
 class SendEmailView(APIView):
