@@ -2,6 +2,7 @@ import csv
 import io
 
 import boto3
+import requests
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,6 +11,18 @@ from rest_framework.views import APIView
 from .serializers import EmailSerializer, GetUrlSerializer, TestEmailSerializer
 from .utilities import render_templates, send_email
 
+class GetCSVView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    permissions = (IsAuthenticated,)
+
+    def get(self, request):
+        response = {}
+
+        object_url = "https://mercury-mailer.s3.ap-south-1.amazonaws.com/mercury.csv"
+
+        response["url"] = object_url
+
+        return Response(response)
 
 class GetUrlView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -59,6 +72,19 @@ class SendEmailView(APIView):
 
             file = serializer.validated_data["recipients"]
 
+            s3_resource = boto3.resource("s3")
+            bucket_name = "mercury-mailer"
+
+            s3_resource.Bucket(bucket_name).put_object(
+                Key="mercury.csv",
+                Body=file,
+                ACL="public-read",
+                ContentType="text/csv",
+                ContentDisposition="attachment",
+            )
+
+            file.seek(0)
+
             recipient_data = csv.DictReader(io.StringIO(file.read().decode()))
 
             for data in recipient_data:
@@ -80,6 +106,7 @@ class SendEmailView(APIView):
 
         else:
             response = serializer.errors
+        
 
         return Response(response)
 
@@ -96,6 +123,19 @@ class SendTestEmailView(APIView):
         if serializer.is_valid():
 
             file = serializer.validated_data["recipients"]
+
+            s3_resource = boto3.resource("s3")
+            bucket_name = "mercury-mailer"
+
+            s3_resource.Bucket(bucket_name).put_object(
+                Key="mercury.csv",
+                Body=file,
+                ACL="public-read",
+                ContentType="text/csv",
+                ContentDisposition="attachment",
+            )
+
+            file.seek(0)
 
             recipient_data = csv.DictReader(io.StringIO(file.read().decode()))
             data = [i for i in recipient_data]
