@@ -2,11 +2,11 @@ import csv
 import io
 
 import boto3
-import requests
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
 
 from .serializers import EmailSerializer, GetUrlSerializer, TestEmailSerializer
 from .utilities import render_templates, send_email
@@ -22,7 +22,7 @@ class GetCSVView(APIView):
 
         response["url"] = object_url
 
-        return Response(response)
+        return Response(response, status=status.HTTP_200_OK)
 
 class GetUrlView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -56,7 +56,7 @@ class GetUrlView(APIView):
         )
         c += 1
 
-        return Response(response)
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class SendEmailView(APIView):
@@ -103,12 +103,12 @@ class SendEmailView(APIView):
                     aws_region=serializer.validated_data["aws_region"],
                 )
                 c += 1
+            
+            return Response(response, status=status.HTTP_200_OK)
 
         else:
             response = serializer.errors
-        
-
-        return Response(response)
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
 
 
 class SendTestEmailView(APIView):
@@ -160,8 +160,10 @@ class SendTestEmailView(APIView):
                     aws_region=serializer.validated_data["aws_region"],
                 )
                 c += 1
+            
+            return Response(response, status=status.HTTP_200_OK)
 
         else:
             response = serializer.errors
-
-        return Response(response)
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
+        
