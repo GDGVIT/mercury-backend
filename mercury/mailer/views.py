@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from .serializers import EmailSerializer, GetUrlSerializer, TestEmailSerializer
-from .utilities import render_templates, send_email
+from .utilities import render_templates, send_email, check_email_validity
 
 class GetCSVView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -93,16 +93,24 @@ class SendEmailView(APIView):
                     serializer.validated_data["body_mjml"], data
                 )
 
-                response[c] = send_email(
-                    sender_name=serializer.validated_data["sender_name"],
-                    sender_email=serializer.validated_data["sender_email"],
-                    recipient_email=data["email"],
-                    subject=serializer.validated_data["subject"],
-                    body_text=serializer.validated_data["body_text"],
-                    body_html=body_html,
-                    aws_region=serializer.validated_data["aws_region"],
-                )
-                c += 1
+                is_valid = check_email_validity(data["email"])
+
+                if is_valid:
+
+                    response[c] = send_email(
+                        sender_name=serializer.validated_data["sender_name"],
+                        sender_email=serializer.validated_data["sender_email"],
+                        recipient_email=data["email"],
+                        subject=serializer.validated_data["subject"],
+                        body_text=serializer.validated_data["body_text"],
+                        body_html=body_html,
+                        aws_region=serializer.validated_data["aws_region"],
+                    )
+
+                else:
+                    response[c] = "Not delivered"
+                
+                c+=1
             
             return Response(response, status=status.HTTP_200_OK)
 
@@ -150,15 +158,22 @@ class SendTestEmailView(APIView):
                     serializer.validated_data["body_mjml"], data[0]
                 )
 
-                response[c] = send_email(
-                    sender_name=serializer.validated_data["sender_name"],
-                    sender_email=serializer.validated_data["sender_email"],
-                    recipient_email=email,
-                    subject=serializer.validated_data["subject"],
-                    body_text=serializer.validated_data["body_text"],
-                    body_html=body_html,
-                    aws_region=serializer.validated_data["aws_region"],
-                )
+                is_valid = check_email_validity(email)
+
+                if is_valid:
+                    response[c] = send_email(
+                        sender_name=serializer.validated_data["sender_name"],
+                        sender_email=serializer.validated_data["sender_email"],
+                        recipient_email=email,
+                        subject=serializer.validated_data["subject"],
+                        body_text=serializer.validated_data["body_text"],
+                        body_html=body_html,
+                        aws_region=serializer.validated_data["aws_region"],
+                    )
+
+                else:
+                    response[c] = "Not delivered"
+
                 c += 1
             
             return Response(response, status=status.HTTP_200_OK)

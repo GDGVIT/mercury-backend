@@ -77,3 +77,11 @@ def render_templates(mjml, recipient_info):
     final_html = html.render(recipient_info)
 
     return final_html
+
+
+def check_email_validity(email):
+    response = requests.get(f"https://emailvalidation.abstractapi.com/v1/?api_key={config('EMAIL_VALIDATOR_API_KEY')}&email={email}").json()
+
+    is_valid = response["deliverability"] == "DELIVERABLE"
+
+    return is_valid
