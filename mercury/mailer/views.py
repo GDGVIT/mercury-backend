@@ -2,14 +2,15 @@ import csv
 import io
 
 import boto3
+from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
 
 from .serializers import EmailSerializer, GetUrlSerializer, TestEmailSerializer
-from .utilities import render_templates, send_email, check_email_validity
+from .utilities import check_email_validity, render_templates, send_email
+
 
 class GetCSVView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -23,6 +24,7 @@ class GetCSVView(APIView):
         response["url"] = object_url
 
         return Response(response, status=status.HTTP_200_OK)
+
 
 class GetUrlView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -85,6 +87,15 @@ class SendEmailView(APIView):
 
             file.seek(0)
 
+            rejected = ""
+
+            recipient_data = csv.DictReader(io.StringIO(file.read().decode()))
+            data = next(recipient_data)
+            for i in data:
+                rejected += str(i) + ","
+            rejected += "\n"
+
+            file.seek(0)
             recipient_data = csv.DictReader(io.StringIO(file.read().decode()))
 
             for data in recipient_data:
@@ -109,9 +120,24 @@ class SendEmailView(APIView):
 
                 else:
                     response[c] = "Not delivered"
-                
-                c+=1
-            
+                    for i in data:
+                        rejected += data[i] + ","
+                    rejected += "\n"
+
+                c += 1
+
+            s3_resource.Bucket(bucket_name).put_object(
+                Key="mercury-rejected.csv",
+                Body=bytes(rejected, "utf-8"),
+                ACL="public-read",
+                ContentType="text/csv",
+                ContentDisposition="attachment",
+            )
+
+            response[
+                "rejected_emails"
+            ] = "https://mercury-mailer.s3.ap-south-1.amazonaws.com/mercury-rejected.csv"
+
             return Response(response, status=status.HTTP_200_OK)
 
         else:
@@ -128,6 +154,8 @@ class SendTestEmailView(APIView):
         c = 1
         serializer = TestEmailSerializer(data=request.data)
 
+        rejected = ""
+
         if serializer.is_valid():
 
             file = serializer.validated_data["recipients"]
@@ -142,6 +170,8 @@ class SendTestEmailView(APIView):
                 ContentType="text/csv",
                 ContentDisposition="attachment",
             )
+
+            rejected += "email" + "\n"
 
             file.seek(0)
 
@@ -173,12 +203,24 @@ class SendTestEmailView(APIView):
 
                 else:
                     response[c] = "Not delivered"
+                    rejected += email + "\n"
 
                 c += 1
-            
+
+            s3_resource.Bucket(bucket_name).put_object(
+                Key="mercury-rejected-test.csv",
+                Body=bytes(rejected, "utf-8"),
+                ACL="public-read",
+                ContentType="text/csv",
+                ContentDisposition="attachment",
+            )
+
+            response[
+                "rejected_emails"
+            ] = "https://mercury-mailer.s3.ap-south-1.amazonaws.com/mercury-rejected-test.csv"
+
             return Response(response, status=status.HTTP_200_OK)
 
         else:
             response = serializer.errors
             return Response(response, status=status.HTTP_404_NOT_FOUND)
-        

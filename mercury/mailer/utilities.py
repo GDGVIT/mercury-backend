@@ -1,6 +1,7 @@
+import re
+
 import boto3
 import requests
-import re
 from botocore.exceptions import ClientError
 from decouple import config
 from jinja2 import Template
