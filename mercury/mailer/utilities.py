@@ -1,5 +1,6 @@
 import boto3
 import requests
+import re
 from botocore.exceptions import ClientError
 from decouple import config
 from jinja2 import Template
@@ -80,8 +81,8 @@ def render_templates(mjml, recipient_info):
 
 
 def check_email_validity(email):
-    response = requests.get(f"https://emailvalidation.abstractapi.com/v1/?api_key={config('EMAIL_VALIDATOR_API_KEY')}&email={email}").json()
+    pattern = re.compile("^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$")
 
-    is_valid = response["deliverability"] == "DELIVERABLE"
+    is_valid = re.match(pattern, email)
 
     return is_valid
