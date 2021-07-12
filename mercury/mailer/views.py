@@ -19,7 +19,7 @@ class GetCSVView(APIView):
     def get(self, request):
         response = {}
 
-        object_url = "https://mercury-mailer.s3.ap-south-1.amazonaws.com/mercury.csv"
+        object_url = f"https://mercury-mailer.s3.ap-south-1.amazonaws.com/{request.user.username}/mercury.csv"
 
         response["url"] = object_url
 
@@ -78,7 +78,7 @@ class SendEmailView(APIView):
             bucket_name = "mercury-mailer"
 
             s3_resource.Bucket(bucket_name).put_object(
-                Key="mercury.csv",
+                Key=f"{request.user.username}/mercury.csv",
                 Body=file,
                 ACL="public-read",
                 ContentType="text/csv",
@@ -127,7 +127,7 @@ class SendEmailView(APIView):
                 c += 1
 
             s3_resource.Bucket(bucket_name).put_object(
-                Key="mercury-rejected.csv",
+                Key=f"{request.user.username}/mercury-rejected.csv",
                 Body=bytes(rejected, "utf-8"),
                 ACL="public-read",
                 ContentType="text/csv",
@@ -136,7 +136,7 @@ class SendEmailView(APIView):
 
             response[
                 "rejected_emails"
-            ] = "https://mercury-mailer.s3.ap-south-1.amazonaws.com/mercury-rejected.csv"
+            ] = f"https://mercury-mailer.s3.ap-south-1.amazonaws.com/{request.user.username}/mercury-rejected.csv"
 
             return Response(response, status=status.HTTP_200_OK)
 
@@ -164,7 +164,7 @@ class SendTestEmailView(APIView):
             bucket_name = "mercury-mailer"
 
             s3_resource.Bucket(bucket_name).put_object(
-                Key="mercury.csv",
+                Key=f"{request.user.username}/mercury.csv",
                 Body=file,
                 ACL="public-read",
                 ContentType="text/csv",
@@ -208,7 +208,7 @@ class SendTestEmailView(APIView):
                 c += 1
 
             s3_resource.Bucket(bucket_name).put_object(
-                Key="mercury-rejected-test.csv",
+                Key=f"{request.user.username}/mercury-rejected-test.csv",
                 Body=bytes(rejected, "utf-8"),
                 ACL="public-read",
                 ContentType="text/csv",
@@ -217,7 +217,7 @@ class SendTestEmailView(APIView):
 
             response[
                 "rejected_emails"
-            ] = "https://mercury-mailer.s3.ap-south-1.amazonaws.com/mercury-rejected-test.csv"
+            ] = f"https://mercury-mailer.s3.ap-south-1.amazonaws.com/{request.user.username}/mercury-rejected-test.csv"
 
             return Response(response, status=status.HTTP_200_OK)
 
