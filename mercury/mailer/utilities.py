@@ -1,10 +1,10 @@
 import re
 
 import boto3
+import chevron
 import requests
 from botocore.exceptions import ClientError
 from decouple import config
-from jinja2 import Template
 from requests.auth import HTTPBasicAuth
 
 
@@ -74,9 +74,7 @@ def toHTML(mjml):
 def render_templates(mjml, recipient_info):
     html = toHTML(mjml)
 
-    html = Template(html)
-
-    final_html = html.render(recipient_info)
+    final_html = chevron.render(html, recipient_info)
 
     return final_html
 
