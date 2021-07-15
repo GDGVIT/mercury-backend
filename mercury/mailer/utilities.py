@@ -1,7 +1,11 @@
+import re
+
 import boto3
+import chevron
+import requests
 from botocore.exceptions import ClientError
-from mjml.mjml2html import mjml_to_html
-from jinja2 import Template
+from decouple import config
+from requests.auth import HTTPBasicAuth
 
 
 def send_email(**info):
@@ -55,15 +59,29 @@ def send_email(**info):
 
 
 def toHTML(mjml):
-    html = mjml_to_html(mjml)
+    response = requests.post(
+        "https://api.mjml.io/v1/render",
+        json={"mjml": mjml},
+        auth=HTTPBasicAuth(
+            config("MJML_API_USERNAME"),
+            config("MJML_API_PASSWORD"),
+        ),
+    )
+    html = response.json()
     return html["html"]
 
 
 def render_templates(mjml, recipient_info):
     html = toHTML(mjml)
 
-    html = Template(html)
-
-    final_html = html.render(recipient_info)
+    final_html = chevron.render(html, recipient_info)
 
     return final_html
+
+
+def check_email_validity(email):
+    pattern = re.compile("^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$")
+
+    is_valid = re.match(pattern, email)
+
+    return is_valid
