@@ -3,7 +3,7 @@
 	<img src="https://user-images.githubusercontent.com/30529572/92081025-fabe6f00-edb1-11ea-9169-4a8a61a5dd45.png" alt="DSC VIT"/>
 </a>
 	<h2 align="center"> Mercury Mailer Backend </h2>
-	<h4 align="center"> Backend of website for sending emails easily with beautiful templates in bulk <h4>
+	<h4 align="center"> Backend of website for sending dynamic emails easily with beautiful templates in bulk <h4>
 </p>
 
 ---
@@ -18,28 +18,33 @@
 - [x]  Bulk Mailing
 - [x]  Login/Logout
 - [x]  MJML to HTML conversion
-- [x]  Automating time
+- [x]  Dynamic content insertion
 
 <br>
 
 ## Dependencies
- - < dependency >
- - < dependency >
+ - Django
+ - Django REST framework
+ - boto3
 
+<br>
 
 ## Running
 
 
-< directions to install >
+### Command to install
 ```bash
-< insert code >
+pip install -r requirements.txt
 ```
 
-< directions to execute >
+### Commands to start the development server
 
 ```bash
-< insert code >
+cd mercury
+python manage.py runserver
 ```
+
+<br>
 
 ## Contributors
 
