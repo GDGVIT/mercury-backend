@@ -1,5 +1,6 @@
 import csv
 import io
+import time
 
 import boto3
 from rest_framework import status
@@ -117,6 +118,10 @@ class SendEmailView(APIView):
                         body_html=body_html,
                         aws_region=serializer.validated_data["aws_region"],
                     )
+
+                    # sleep for 5 seconds for every 70 emails, to help with ratelimits
+                    if (c % 70 == 0):
+                        time.sleep(5)
 
                 else:
                     response[c] = "Not delivered"
